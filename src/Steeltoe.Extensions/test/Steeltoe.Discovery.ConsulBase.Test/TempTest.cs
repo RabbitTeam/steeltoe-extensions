@@ -4,7 +4,6 @@ using Steeltoe.Common.Discovery;
 using Steeltoe.Discovery.Consul;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,7 +20,7 @@ namespace Steeltoe.Discovery.ConsulBase.Test
                 {
                     new KeyValuePair<string, string>("spring:application:name","ConsoleApp"),
                     new KeyValuePair<string, string>("spring:application:instance_id","ConsoleApp1"),
-                    new KeyValuePair<string, string>("consul:client:serviceUrl","http://192.168.100.150:8500"),
+                    new KeyValuePair<string, string>("consul:client:serviceUrl","http://localhost:8500"),
                     new KeyValuePair<string, string>("consul:client:registryFetchIntervalSeconds","2"),
                     new KeyValuePair<string, string>("consul:instance:port","5000"),
                     new KeyValuePair<string, string>("consul:instance:host","192.168.1.100"),
@@ -40,9 +39,8 @@ namespace Steeltoe.Discovery.ConsulBase.Test
             foreach (var service in discoveryClient.Services)
             {
                 var instances = discoveryClient.GetInstances(service);
-                if (!instances.Any())
-                {
-                }
+                Assert.NotEmpty(instances);
+                instances = discoveryClient.GetInstances(service.ToUpper());
                 Assert.NotEmpty(instances);
             }
 

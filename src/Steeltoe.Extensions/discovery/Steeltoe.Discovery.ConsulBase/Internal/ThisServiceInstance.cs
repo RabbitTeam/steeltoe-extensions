@@ -55,7 +55,7 @@ namespace Steeltoe.Discovery.Consul.Internal
             get
             {
                 var scheme = IsSecure ? "https" : "http";
-                var uri = new Uri(scheme + "://" + Host + ":" + Port);
+                var uri = new Uri(scheme + "://" + Host.ToLower() + ":" + Port);
                 return uri;
             }
         }
@@ -73,7 +73,7 @@ namespace Steeltoe.Discovery.Consul.Internal
         {
             var registration = new AgentServiceRegistration
             {
-                Address = Host,
+                Address = Host.ToLower(),
                 Check = new AgentServiceCheck
                 {
                     TTL = TimeSpan.FromSeconds(instanceOptions.LeaseExpirationDurationInSeconds),
@@ -89,7 +89,7 @@ namespace Steeltoe.Discovery.Consul.Internal
                 registration.Tags = new[]
                 {
                     "metadata=" + JsonConvert.SerializeObject(Metadata,
-                        new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore})
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
                 };
             }
 

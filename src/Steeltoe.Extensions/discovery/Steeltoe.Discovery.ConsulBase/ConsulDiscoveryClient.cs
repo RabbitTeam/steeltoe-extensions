@@ -66,7 +66,10 @@ namespace Steeltoe.Discovery.Consul
         /// <inheritdoc/>
         public IList<IServiceInstance> GetInstances(string serviceId)
         {
-            return _instances.OfType<IServiceInstance>().Where(i => i.ServiceId == serviceId).ToArray();
+            if (serviceId == null)
+                throw new ArgumentNullException(nameof(serviceId));
+
+            return _instances.OfType<IServiceInstance>().Where(i => serviceId.Equals(i.ServiceId, StringComparison.OrdinalIgnoreCase)).ToArray();
         }
 
         /// <inheritdoc/>
@@ -158,10 +161,11 @@ namespace Steeltoe.Discovery.Consul
         private async Task<IList<ConsulServiceInstance>> LoadConsulInstancesAsync()
         {
             var result = await ConsulClient.Health.State(HealthStatus.Passing);
-            var passServiceIds = result.Response.Select(i => i.ServiceID).ToArray();
+            var passServiceIds = result.Response.Select(i => i.ServiceID).Where(i => !string.IsNullOrEmpty(i)).ToArray();
 
             var agentServices = (await ConsulClient.Agent.Services()).Response.Values;
             return agentServices
+                .Where(i => !string.IsNullOrEmpty(i.ID))
                 .Where(i => passServiceIds.Contains(i.ID))
                 .Select(s => new ConsulServiceInstance(s)).ToArray();
         }
