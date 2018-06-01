@@ -12,6 +12,13 @@ namespace Steeltoe.Discovery.Consul
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether indicates whether the instance should be enabled for taking traffic as soon as it is registered with consul.
+        /// Sometimes the application might need to do some pre-processing before it is ready to take traffic.
+        /// Configuration property: consul:instance:instanceEnabledOnInit
+        /// </summary>
+        public bool IsInstanceEnabledOnInit { get; set; } = true;
+
+        /// <summary>
         /// consul Gets or sets indicates how often (in seconds) the consul client needs to send
         /// heartbeats to consul server to indicate that it is still alive. If the heartbeats are not
         /// received for the period specified in <see cref="LeaseExpirationDurationInSeconds"/>,

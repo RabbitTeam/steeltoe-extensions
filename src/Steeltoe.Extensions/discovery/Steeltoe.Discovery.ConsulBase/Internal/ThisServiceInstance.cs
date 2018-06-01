@@ -77,7 +77,7 @@ namespace Steeltoe.Discovery.Consul.Internal
                 Check = new AgentServiceCheck
                 {
                     TTL = TimeSpan.FromSeconds(instanceOptions.LeaseExpirationDurationInSeconds),
-                    Status = HealthStatus.Passing
+                    Status = instanceOptions.IsInstanceEnabledOnInit ? HealthStatus.Passing : HealthStatus.Maintenance
                 },
                 ID = InstanceId,
                 Name = ServiceId,
