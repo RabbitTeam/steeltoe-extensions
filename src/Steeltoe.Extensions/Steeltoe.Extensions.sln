@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steeltoe.Discovery.ConsulBase", "discovery\Steeltoe.Discovery.ConsulBase\Steeltoe.Discovery.ConsulBase.csproj", "{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "discovery", "discovery", "{74414E35-320E-47AF-9059-B1D2B320B8CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E805F42B-91BE-46E8-950E-8513E09711E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steeltoe.Discovery.ConsulBase.Test", "test\Steeltoe.Discovery.ConsulBase.Test\Steeltoe.Discovery.ConsulBase.Test.csproj", "{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DA0E6F83-9291-4C2D-BEF5-BAC7970F82F0} = {74414E35-320E-47AF-9059-B1D2B320B8CC}
+		{06CAE538-EF24-4A97-AD60-AE5A6A67A5CF} = {E805F42B-91BE-46E8-950E-8513E09711E6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5E5E5C4E-9DAF-453B-9629-5F2F62F0DAA0}
+	EndGlobalSection
+EndGlobal
