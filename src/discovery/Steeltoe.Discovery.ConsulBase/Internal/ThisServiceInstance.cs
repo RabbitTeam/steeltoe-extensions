@@ -1,4 +1,18 @@
-﻿using Consul;
+﻿// Copyright 2017 the original author or authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Consul;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Steeltoe.Common.Discovery;
@@ -10,15 +24,16 @@ namespace Steeltoe.Discovery.Consul.Internal
 {
     internal class ThisServiceInstance : IServiceInstance
     {
+        public string InstanceId => InstanceOptions.InstanceId;
+
         private readonly IOptionsMonitor<ConsulInstanceOptions> _optionsMonitor;
+
+        private ConsulInstanceOptions InstanceOptions => _optionsMonitor.CurrentValue;
 
         public ThisServiceInstance(IOptionsMonitor<ConsulInstanceOptions> optionsMonitor)
         {
             _optionsMonitor = optionsMonitor;
         }
-
-        private ConsulInstanceOptions InstanceOptions => _optionsMonitor.CurrentValue;
-        public string InstanceId => InstanceOptions.InstanceId;
 
         #region Implementation of IServiceInstance
 
@@ -33,7 +48,10 @@ namespace Steeltoe.Discovery.Consul.Internal
             get
             {
                 if (_host != null)
+                {
                     return _host;
+                }
+
                 return _host = InstanceOptions.GetHostName(false);
             }
             set => _host = value;
@@ -88,7 +106,8 @@ namespace Steeltoe.Discovery.Consul.Internal
             {
                 registration.Tags = new[]
                 {
-                    "metadata=" + JsonConvert.SerializeObject(Metadata,
+                    "metadata=" + JsonConvert.SerializeObject(
+                        Metadata,
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
                 };
             }

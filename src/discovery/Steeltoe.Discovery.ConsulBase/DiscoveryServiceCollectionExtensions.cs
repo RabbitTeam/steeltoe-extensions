@@ -1,4 +1,18 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿// Copyright 2017 the original author or authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -10,16 +24,22 @@ namespace Steeltoe.Discovery.Consul
 {
     public static class DiscoveryServiceCollectionExtensions
     {
-        public static IServiceCollection AddConsulDiscoveryClient(this IServiceCollection services, DiscoveryOptions discoveryOptions,
-            IDiscoveryLifecycle lifecycle = null)
+        public static IServiceCollection AddConsulDiscoveryClient(this IServiceCollection services, DiscoveryOptions discoveryOptions, IDiscoveryLifecycle lifecycle = null)
         {
             if (services == null)
+            {
                 throw new ArgumentNullException(nameof(services));
+            }
+
             if (discoveryOptions == null)
+            {
                 throw new ArgumentNullException(nameof(discoveryOptions));
+            }
 
             if (discoveryOptions.ClientType == DiscoveryClientType.EUREKA)
+            {
                 throw new ArgumentException("Client type EUREKA");
+            }
 
             var clientOptions = discoveryOptions.ClientOptions as ConsulClientOptions;
             services.AddSingleton<IOptionsMonitor<ConsulClientOptions>>(new OptionsMonitorWrapper<ConsulClientOptions>(clientOptions));
@@ -33,7 +53,8 @@ namespace Steeltoe.Discovery.Consul
             return services;
         }
 
-        public static IServiceCollection AddConsulDiscoveryClient(this IServiceCollection services,
+        public static IServiceCollection AddConsulDiscoveryClient(
+            this IServiceCollection services,
             Action<DiscoveryOptions> setupOptions,
             IDiscoveryLifecycle lifecycle = null)
         {
@@ -42,23 +63,10 @@ namespace Steeltoe.Discovery.Consul
             return services.AddConsulDiscoveryClient(discoveryOptions, lifecycle);
         }
 
-        private static void AddConsulServices(IServiceCollection services, IDiscoveryLifecycle lifecycle)
-        {
-            services.AddSingleton<ConsulDiscoveryClient>();
-            if (lifecycle == null)
-            {
-                services.AddSingleton<IDiscoveryLifecycle, ApplicationLifecycle>();
-            }
-            else
-            {
-                services.AddSingleton(lifecycle);
-            }
-
-            services.AddSingleton<IDiscoveryClient>(p => p.GetService<ConsulDiscoveryClient>());
-        }
-
-        public static IServiceCollection AddConsulDiscoveryClient(this IServiceCollection services,
-            IConfiguration configuration, IDiscoveryLifecycle lifecycle = null)
+        public static IServiceCollection AddConsulDiscoveryClient(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            IDiscoveryLifecycle lifecycle = null)
         {
             var clientConfiguration = configuration.GetSection("consul");
 
@@ -81,6 +89,21 @@ namespace Steeltoe.Discovery.Consul
             AddConsulServices(services, lifecycle);
 
             return services;
+        }
+
+        private static void AddConsulServices(IServiceCollection services, IDiscoveryLifecycle lifecycle)
+        {
+            services.AddSingleton<ConsulDiscoveryClient>();
+            if (lifecycle == null)
+            {
+                services.AddSingleton<IDiscoveryLifecycle, ApplicationLifecycle>();
+            }
+            else
+            {
+                services.AddSingleton(lifecycle);
+            }
+
+            services.AddSingleton<IDiscoveryClient>(p => p.GetService<ConsulDiscoveryClient>());
         }
 
         internal class ApplicationLifecycle : IDiscoveryLifecycle

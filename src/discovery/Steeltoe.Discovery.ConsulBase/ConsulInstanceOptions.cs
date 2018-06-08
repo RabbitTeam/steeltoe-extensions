@@ -1,4 +1,18 @@
-﻿using Steeltoe.Common.Discovery;
+﻿// Copyright 2017 the original author or authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Steeltoe.Common.Discovery;
 using System;
 using System.Collections.Generic;
 
@@ -12,14 +26,15 @@ namespace Steeltoe.Discovery.Consul
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether indicates whether the instance should be enabled for taking traffic as soon as it is registered with consul.
-        /// Sometimes the application might need to do some pre-processing before it is ready to take traffic.
-        /// Configuration property: consul:instance:instanceEnabledOnInit
+        /// Gets or sets a value indicating whether indicates whether the instance should be enabled
+        /// for taking traffic as soon as it is registered with consul. Sometimes the application
+        /// might need to do some pre-processing before it is ready to take traffic. Configuration
+        /// property: consul:instance:instanceEnabledOnInit
         /// </summary>
         public bool IsInstanceEnabledOnInit { get; set; } = true;
 
         /// <summary>
-        /// consul Gets or sets indicates how often (in seconds) the consul client needs to send
+        /// Gets or sets consul indicates how often (in seconds) the consul client needs to send
         /// heartbeats to consul server to indicate that it is still alive. If the heartbeats are not
         /// received for the period specified in <see cref="LeaseExpirationDurationInSeconds"/>,
         /// consul server will removethe instance from its view, there by disallowing traffic to this
@@ -48,7 +63,9 @@ namespace Steeltoe.Discovery.Consul
         }
 
         public string Name { get; set; }
+
         public int Port { get; set; }
+
         public IDictionary<string, string> Metadata { get; set; }
     }
 }

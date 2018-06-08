@@ -1,4 +1,18 @@
-﻿using Consul;
+﻿// Copyright 2017 the original author or authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Consul;
 using Microsoft.Extensions.Options;
 using Steeltoe.Common.Discovery;
 using Steeltoe.Discovery.Consul.Internal;
@@ -15,17 +29,20 @@ namespace Steeltoe.Discovery.Consul
     {
         private readonly IOptionsMonitor<ConsulClientOptions> _optionsMonitor;
         private readonly IOptionsMonitor<ConsulInstanceOptions> _instanceOptionsMonitor;
+        private readonly ThisServiceInstance _thisServiceInstance;
         private volatile IList<ConsulServiceInstance> _instances;
         private int _shutdown;
         private TimedTask _cacheRefreshTimer;
         private TimedTask _heartBeatTimer;
-        private readonly ThisServiceInstance _thisServiceInstance;
 
         public IConsulClient ConsulClient { get; private set; }
+
         private ConsulClientOptions ClientOptions => _optionsMonitor.CurrentValue;
+
         private ConsulInstanceOptions InstanceOptions => _instanceOptionsMonitor.CurrentValue;
 
-        public ConsulDiscoveryClient(IOptionsMonitor<ConsulClientOptions> optionsMonitor,
+        public ConsulDiscoveryClient(
+            IOptionsMonitor<ConsulClientOptions> optionsMonitor,
             IOptionsMonitor<ConsulInstanceOptions> instanceOptionsMonitor)
         {
             _optionsMonitor = optionsMonitor;
@@ -36,23 +53,34 @@ namespace Steeltoe.Discovery.Consul
             var instanceOptions = InstanceOptions;
 
             if (ClientOptions.ShouldFetchRegistry)
+            {
                 _cacheRefreshTimer = new TimedTask("Query", CacheRefreshTaskAsync, options.RegistryFetchIntervalSeconds * 1000);
+            }
 
             if (ClientOptions.ShouldRegisterWithConsul)
+            {
                 _heartBeatTimer = new TimedTask("HeartBeat", HeartBeatTaskAsync, instanceOptions.LeaseRenewalIntervalInSeconds * 1000);
+            }
 
             _thisServiceInstance = new ThisServiceInstance(instanceOptionsMonitor);
 
             if (options.ShouldRegisterWithConsul || options.ShouldFetchRegistry)
+            {
                 Task.Run(async () =>
                     {
                         if (options.ShouldRegisterWithConsul)
+                        {
                             await RegisterAsync();
+                        }
+
                         if (options.ShouldFetchRegistry)
+                        {
                             _instances = await LoadConsulInstancesAsync();
+                        }
                     })
                     .GetAwaiter()
                     .GetResult();
+            }
         }
 
         #region Implementation of IDiscoveryClient
@@ -67,7 +95,9 @@ namespace Steeltoe.Discovery.Consul
         public IList<IServiceInstance> GetInstances(string serviceId)
         {
             if (serviceId == null)
+            {
                 throw new ArgumentNullException(nameof(serviceId));
+            }
 
             return _instances.OfType<IServiceInstance>().Where(i => serviceId.Equals(i.ServiceId, StringComparison.OrdinalIgnoreCase)).ToArray();
         }
@@ -77,7 +107,9 @@ namespace Steeltoe.Discovery.Consul
         {
             var shutdown = Interlocked.Exchange(ref _shutdown, 1);
             if (shutdown > 0)
+            {
                 return;
+            }
 
             _cacheRefreshTimer?.Dispose();
             _cacheRefreshTimer = null;
@@ -85,7 +117,9 @@ namespace Steeltoe.Discovery.Consul
             _heartBeatTimer = null;
 
             if (ClientOptions.ShouldRegisterWithConsul)
+            {
                 await UnregisterAsync();
+            }
 
             ConsulClient?.Dispose();
             ConsulClient = null;
@@ -99,12 +133,23 @@ namespace Steeltoe.Discovery.Consul
 
         #endregion Implementation of IDiscoveryClient
 
+        #region IDisposable
+
+        /// <inheritdoc/>
+        public void Dispose() => ShutdownAsync().GetAwaiter().GetResult();
+
+        #endregion IDisposable
+
         #region Private Method
+
+        private static string GetCheckId(string instanceId) => "service:" + instanceId;
 
         private async void HeartBeatTaskAsync()
         {
             if (_shutdown > 0)
+            {
                 return;
+            }
 
             await PassTtlAsync("heartBeat");
         }
@@ -112,7 +157,9 @@ namespace Steeltoe.Discovery.Consul
         private async void CacheRefreshTaskAsync()
         {
             if (_shutdown > 0)
+            {
                 return;
+            }
 
             _instances = await LoadConsulInstancesAsync();
         }
@@ -134,7 +181,10 @@ namespace Steeltoe.Discovery.Consul
         private async Task PassTtlAsync(string note)
         {
             if (!ClientOptions.ShouldRegisterWithConsul)
+            {
                 return;
+            }
+
             await TryTtlAsync(() => ConsulClient.Agent.PassTTL(GetCheckId(_thisServiceInstance.InstanceId), note));
         }
 
@@ -147,15 +197,13 @@ namespace Steeltoe.Discovery.Consul
             catch (ConsulRequestException cre) when (cre.StatusCode == HttpStatusCode.InternalServerError)
             {
                 if (!cre.Message.Contains("does not have associated TTL"))
+                {
                     return;
+                }
+
                 await RegisterAsync();
                 await ttlTask();
             }
-        }
-
-        private static string GetCheckId(string instanceId)
-        {
-            return "service:" + instanceId;
         }
 
         private async Task<IList<ConsulServiceInstance>> LoadConsulInstancesAsync()
@@ -176,15 +224,5 @@ namespace Steeltoe.Discovery.Consul
         }
 
         #endregion Private Method
-
-        #region IDisposable
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            ShutdownAsync().GetAwaiter().GetResult();
-        }
-
-        #endregion IDisposable
     }
 }
