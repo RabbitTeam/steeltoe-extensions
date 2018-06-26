@@ -31,7 +31,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1E39C7B-535D-404A-9AF9-429E43288A32}"
 	ProjectSection(SolutionItems) = preProject
 		stylecop.json = stylecop.json
+		versions.props = versions.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steeltoe.Discovery.Consul.Client", "src\discovery\Steeltoe.Discovery.Consul.Client\Steeltoe.Discovery.Consul.Client.csproj", "{EA4175BE-5724-4FBE-8EF8-453EDFCF5288}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +58,10 @@ Global
 		{8EA0C49B-6F12-43E8-BB83-506FB96BCFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EA0C49B-6F12-43E8-BB83-506FB96BCFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EA0C49B-6F12-43E8-BB83-506FB96BCFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4175BE-5724-4FBE-8EF8-453EDFCF5288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4175BE-5724-4FBE-8EF8-453EDFCF5288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4175BE-5724-4FBE-8EF8-453EDFCF5288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4175BE-5724-4FBE-8EF8-453EDFCF5288}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +73,7 @@ Global
 		{5B52BFEC-72C2-4262-AED1-7A0A70778F0C} = {521252DE-906F-45AC-96EC-8B609A470245}
 		{6E24B3FE-C1AA-4D23-9E8B-74C6A881D8C5} = {5B52BFEC-72C2-4262-AED1-7A0A70778F0C}
 		{8EA0C49B-6F12-43E8-BB83-506FB96BCFBF} = {5B52BFEC-72C2-4262-AED1-7A0A70778F0C}
+		{EA4175BE-5724-4FBE-8EF8-453EDFCF5288} = {3B009DE0-3FE4-4F98-979B-58A630D3691E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E5E5C4E-9DAF-453B-9629-5F2F62F0DAA0}

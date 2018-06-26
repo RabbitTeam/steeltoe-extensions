@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Steeltoe.Extensions.Configuration.CloudFoundry;
+using Steeltoe.Discovery.Consul.Client;
 
 namespace Time_UI
 {
@@ -13,9 +13,8 @@ namespace Time_UI
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseCloudFoundryHosting(5555)
-                .AddCloudFoundry()
                 .UseStartup<Startup>()
+                .UseDiscoveryClient()
                 .Build();
     }
 }

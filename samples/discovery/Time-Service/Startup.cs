@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Steeltoe.Discovery.Consul;
+using Steeltoe.Management.Endpoint.CloudFoundry;
+using Steeltoe.Management.Endpoint.Health;
 
 namespace Time_Service
 {
@@ -18,9 +19,10 @@ namespace Time_Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConsulDiscoveryClient(Configuration);
-
             services.AddMvc();
+
+            services.AddHealthActuator(Configuration);
+            services.AddCloudFoundryActuator(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,14 +33,15 @@ namespace Time_Service
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHealthActuator();
+            app.UseCloudFoundryActuator();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            app.UseDiscoveryClient();
         }
     }
 }

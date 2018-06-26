@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Steeltoe.Discovery.Consul;
 using Time_UI.Services;
 
 namespace Time_UI
@@ -19,7 +18,6 @@ namespace Time_UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConsulDiscoveryClient(Configuration);
             services.AddSingleton<ITimeService, TimeService>();
 
             services.AddMvc();
@@ -39,8 +37,6 @@ namespace Time_UI
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            app.UseDiscoveryClient();
         }
     }
 }

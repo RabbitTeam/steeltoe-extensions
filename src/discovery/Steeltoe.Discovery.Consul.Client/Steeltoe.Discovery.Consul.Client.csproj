@@ -8,8 +8,8 @@
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>Pivotal;majian</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Steeltoe.Discovery.ConsulBase</AssemblyName>
-    <PackageId>Steeltoe.Discovery.ConsulBase</PackageId>
+    <AssemblyName>Steeltoe.Discovery.Consul.Client</AssemblyName>
+    <PackageId>Steeltoe.Discovery.Consul.Client</PackageId>
     <PackageTags>Consul, ASPNET Core, Spring, Spring Cloud</PackageTags>
     <PackageIconUrl>https://steeltoe.io/images/transparent.png</PackageIconUrl>
     <PackageProjectUrl>https://steeltoe.io</PackageProjectUrl>
@@ -21,20 +21,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="out\**" />
-    <EmbeddedResource Remove="out\**" />
-    <None Remove="out\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Consul" Version="$(ConsulVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="$(AspNetCoreVersion)" />
     <PackageReference Include="Steeltoe.Common" Version="$(SteeltoeCommonVersion)" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(AspNetCoreVersion)" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(AspNetCoreVersion)" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="$(AspNetCoreVersion)" />
     <PackageReference Include="StyleCop.Analyzers" Version="$(StyleCopVersion)">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Steeltoe.Discovery.ConsulBase\Steeltoe.Discovery.ConsulBase.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\discovery\Steeltoe.Discovery.ConsulBase\Steeltoe.Discovery.ConsulBase.csproj" />
+    <ProjectReference Include="..\..\..\src\discovery\Steeltoe.Discovery.Consul.Client\Steeltoe.Discovery.Consul.Client.csproj" />
   </ItemGroup>
 
 </Project>

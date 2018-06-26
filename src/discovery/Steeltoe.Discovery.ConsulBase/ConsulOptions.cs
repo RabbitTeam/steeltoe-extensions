@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Steeltoe.Common.Discovery;
-
 namespace Steeltoe.Discovery.Consul
 {
-    public static class DiscoveryApplicationBuilderExtensions
+    public class ConsulOptions
     {
-        public static IApplicationBuilder UseDiscoveryClient(this IApplicationBuilder app)
-        {
-            var service = app.ApplicationServices.GetRequiredService<IDiscoveryClient>();
-            return app;
-        }
+        public string Host { get; set; } = "localhost";
+
+        public string Scheme { get; set; } = "http";
+
+        public int Port { get; set; } = 8500;
+
+        public string Datacenter { get; set; }
+
+        public string Token { get; set; }
+
+        public string WaitTime { get; set; }
+
+        public bool Enable { get; set; }
     }
 }
