@@ -21,19 +21,19 @@ using System.Net.Sockets;
 
 namespace Steeltoe.Discovery.Consul.Util
 {
-    internal class ConsulServerUtils
+    public class ConsulServerUtils
     {
         public static string FindHost(ServiceEntry healthService)
         {
             var service = healthService.Service;
             var node = healthService.Node;
 
-            if (string.IsNullOrWhiteSpace(service.Address))
+            if (!string.IsNullOrWhiteSpace(service.Address))
             {
                 return FixIPv6Address(service.Address);
             }
 
-            if (string.IsNullOrWhiteSpace(node.Address))
+            if (!string.IsNullOrWhiteSpace(node.Address))
             {
                 return FixIPv6Address(node.Address);
             }
