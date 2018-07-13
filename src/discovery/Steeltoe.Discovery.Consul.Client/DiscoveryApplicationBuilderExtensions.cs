@@ -1,16 +1,14 @@
 ﻿// Copyright 2017 the original author or authors.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License. You may obtain a copy of the License at
 //
 // http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+// or implied. See the License for the specific language governing permissions and limitations under
+// the License.
 
 using Consul;
 using Microsoft.AspNetCore.Builder;
@@ -75,20 +73,27 @@ namespace Steeltoe.Discovery.Consul.Client
             };
         }
 
-        private static AgentServiceCheck CreateCheck(ConsulDiscoveryOptions options, HeartbeatOptions heartbeatOptions)
+        private static bool SetHeartbeat(AgentServiceCheck check, HeartbeatOptions heartbeatOptions)
         {
-            if (!options.RegisterHealthCheck && !heartbeatOptions.Enable)
+            if (!heartbeatOptions.Enable || heartbeatOptions.TtlValue <= 0 || string.IsNullOrEmpty(heartbeatOptions.TtlUnit))
             {
-                return null;
+                return false;
             }
 
-            var healthCheckUrl = options.HealthCheckUrl;
-            TimeSpan? deregisterCriticalServiceAfter = null;
-            TimeSpan? ttl = null;
-            TimeSpan? interval = null;
-            TimeSpan? timeout = null;
+            check.Interval = null;
+            check.HTTP = null;
 
-            if (string.IsNullOrWhiteSpace(healthCheckUrl) && !string.IsNullOrWhiteSpace(options.HealthCheckPath))
+            TimeSpan? ttl = DateTimeConversions.ToTimeSpan(heartbeatOptions.TtlValue + heartbeatOptions.TtlUnit);
+            check.TTL = ttl;
+
+            return true;
+        }
+
+        private static bool SetHttpCheck(AgentServiceCheck check, ConsulDiscoveryOptions options)
+        {
+            var healthCheckUrl = options.HealthCheckUrl;
+
+            if (string.IsNullOrEmpty(healthCheckUrl))
             {
                 var hostString = options.HostName;
                 var port = options.Port;
@@ -101,37 +106,58 @@ namespace Steeltoe.Discovery.Consul.Client
                 }
 
                 healthCheckUrl = $"{options.Scheme}://{hostString}{healthCheckPath}";
-
-                if (!string.IsNullOrWhiteSpace(options.HealthCheckInterval))
-                {
-                    interval = DateTimeConversions.ToTimeSpan(options.HealthCheckInterval);
-                }
-
-                if (!string.IsNullOrWhiteSpace(options.HealthCheckTimeout))
-                {
-                    timeout = DateTimeConversions.ToTimeSpan(options.HealthCheckTimeout);
-                }
-
-                if (!string.IsNullOrWhiteSpace(options.HealthCheckCriticalTimeout))
-                {
-                    deregisterCriticalServiceAfter = DateTimeConversions.ToTimeSpan(options.HealthCheckCriticalTimeout);
-                }
             }
 
-            if (heartbeatOptions.Enable && heartbeatOptions.TtlValue > 0 && !string.IsNullOrWhiteSpace(heartbeatOptions.TtlUnit))
+            TimeSpan? interval = null;
+
+            if (!string.IsNullOrWhiteSpace(options.HealthCheckInterval))
             {
-                ttl = DateTimeConversions.ToTimeSpan(heartbeatOptions.TtlValue + heartbeatOptions.TtlUnit);
+                interval = DateTimeConversions.ToTimeSpan(options.HealthCheckInterval);
+            }
+
+            if (string.IsNullOrEmpty(healthCheckUrl) || interval == null)
+            {
+                return false;
+            }
+
+            check.HTTP = healthCheckUrl;
+            check.Interval = interval;
+
+            return true;
+        }
+
+        private static AgentServiceCheck CreateCheck(ConsulDiscoveryOptions options, HeartbeatOptions heartbeatOptions)
+        {
+            if (!options.RegisterHealthCheck)
+            {
+                return null;
+            }
+
+            TimeSpan? deregisterCriticalServiceAfter = null;
+            TimeSpan? timeout = null;
+
+            if (!string.IsNullOrWhiteSpace(options.HealthCheckTimeout))
+            {
+                timeout = DateTimeConversions.ToTimeSpan(options.HealthCheckTimeout);
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.HealthCheckCriticalTimeout))
+            {
+                deregisterCriticalServiceAfter = DateTimeConversions.ToTimeSpan(options.HealthCheckCriticalTimeout);
             }
 
             var check = new AgentServiceCheck
             {
-                HTTP = healthCheckUrl,
-                Interval = interval,
                 Timeout = timeout,
-                DeregisterCriticalServiceAfter = deregisterCriticalServiceAfter,
-                TTL = ttl
+                DeregisterCriticalServiceAfter = deregisterCriticalServiceAfter
             };
-            return check;
+
+            if (heartbeatOptions.Enable)
+            {
+                return SetHeartbeat(check, heartbeatOptions) ? check : null;
+            }
+
+            return SetHttpCheck(check, options) ? check : null;
         }
     }
 }
